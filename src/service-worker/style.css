@@ -1,0 +1,31 @@
+.text-center {
+  text-align: center;
+}
+
+.img-container {
+  margin: 0 auto;
+  width: 500px;
+  height: 313px;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50px;
+  height: 30px;
+  line-height: 30px;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  background-color: rgba(0, 0, 0, .6);
+  border-bottom-right-radius: 6px;
+}
+
+img {
+  display: inline-block;
+  margin: 0 auto;
+}
