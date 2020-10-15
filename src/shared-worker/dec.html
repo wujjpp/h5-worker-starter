@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta 
+    name="viewport" 
+    content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+  <title>Shared Worker - dec</title>
+  <style>
+    input{
+      width: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <button onclick="dec()">dec</button>
+    <span id="count"></span>
+  </div>
+  <script>
+    let worker = new SharedWorker('./worker.js')
+    
+    worker.port.onmessage = function (e) {
+      document.getElementById('count').innerText = e.data.count
+    }
+
+    function dec(){
+      worker.port.postMessage({
+        event:'dec'
+      })
+    }
+  </script>
+</body>
+
+</html>
