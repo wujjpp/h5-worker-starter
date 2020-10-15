@@ -1,24 +1,32 @@
-const OFFLINE_VERSION = 1
-const OFFLINE_URL = 'offline.html'
+const OFFLINE_INDEX = 'neterror.html'
+
+const OFFLINE_URLS = [
+  OFFLINE_INDEX,
+  'neterror.css',
+  'neterror.js',
+  'neterror/default_100_percent/100-disabled.png',
+  'neterror/default_100_percent/100-error-offline.png',
+  'neterror/default_100_percent/100-offline-sprite.png',
+  'neterror/default_200_percent/200-disabled.png',
+  'neterror/default_200_percent/200-error-offline.png',
+  'neterror/default_200_percent/200-offline-sprite.png',
+]
 
 const RUNTIME_CACHE = 'cache-v1'
 
-const PRECACHE_URLS = [
-  'style.css',
-  'app.js'
-]
+const PRECACHE_URLS = OFFLINE_URLS.concat(
+  [
+    'style.css',
+    'app.js'
+  ]
+)
 
 // The install handler takes care of precaching the resources we always need.
 self.addEventListener('install', event => {
   event.waitUntil(
     caches
       .open(RUNTIME_CACHE)
-      .then(cache => Promise.all(
-        [
-          cache.add(new Request(OFFLINE_URL, { cache: 'reload' })),
-          cache.addAll(PRECACHE_URLS)
-        ])
-      )
+      .then(cache => cache.addAll(PRECACHE_URLS))
       .then(self.skipWaiting())
   )
 })
@@ -67,10 +75,8 @@ self.addEventListener('fetch', event => {
         // due to a network error.
         // If fetch() returns a valid HTTP response with a response code in
         // the 4xx or 5xx range, the catch() will NOT be called.
-        console.log('Fetch failed; returning offline page instead.', error);
-
         const cache = await caches.open(RUNTIME_CACHE);
-        const cachedResponse = await cache.match(OFFLINE_URL);
+        const cachedResponse = await cache.match(OFFLINE_INDEX);
         return cachedResponse;
       }
     })());
