@@ -1,28 +1,57 @@
-const OFFLINE_VERSION = 1;
-const CACHE_NAME = 'offline';
-const OFFLINE_URL = 'offline.html';
+const OFFLINE_VERSION = 1
+const OFFLINE_URL = 'offline.html'
 
-self.addEventListener('install', (event) => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    await cache.add(new Request(OFFLINE_URL, { cache: 'reload' }));
-  })());
-});
+const RUNTIME_CACHE = 'cache-v1'
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil((async () => {
-    // Enable navigation preload if it's supported.
-    // See https://developers.google.com/web/updates/2017/02/navigation-preload
-    if ('navigationPreload' in self.registration) {
-      await self.registration.navigationPreload.enable();
-    }
-  })());
-  self.clients.claim();
-});
+const PRECACHE_URLS = [
+  'style.css',
+  'app.js'
+]
 
-self.addEventListener('fetch', (event) => {
-  // We only want to call event.respondWith() if this is a navigation request
-  // for an HTML page.
+// The install handler takes care of precaching the resources we always need.
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches
+      .open(RUNTIME_CACHE)
+      .then(cache => Promise.all(
+        [
+          cache.add(new Request(OFFLINE_URL, { cache: 'reload' })),
+          cache.addAll(PRECACHE_URLS)
+        ])
+      )
+      .then(self.skipWaiting())
+  )
+})
+
+// The activate handler takes care of cleaning up old caches.
+self.addEventListener('activate', event => {
+  const currentCaches = [RUNTIME_CACHE]
+  event.waitUntil(
+    caches
+      .keys()
+      .then(cacheNames => {
+        return cacheNames.filter(cacheName => !currentCaches.includes(cacheName))
+      })
+      .then(cachesToDelete => {
+        return Promise.all(cachesToDelete.map(cacheToDelete => {
+          return caches.delete(cacheToDelete)
+        }))
+      })
+      .then(() => {
+        if ('navigationPreload' in self.registration) {
+          return self.registration.navigationPreload.enable()
+        } else {
+          return Promise.resolve()
+        }
+      })
+      .then(() => self.clients.claim())
+  )
+})
+
+// The fetch handler serves responses resources from a cache.
+// If no response is found, it populates the runtime cache with the response
+// from the network before returning it to the page.
+self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
     event.respondWith((async () => {
       try {
@@ -31,7 +60,6 @@ self.addEventListener('fetch', (event) => {
         if (preloadResponse) {
           return preloadResponse;
         }
-
         const networkResponse = await fetch(event.request);
         return networkResponse;
       } catch (error) {
@@ -41,10 +69,29 @@ self.addEventListener('fetch', (event) => {
         // the 4xx or 5xx range, the catch() will NOT be called.
         console.log('Fetch failed; returning offline page instead.', error);
 
-        const cache = await caches.open(CACHE_NAME);
+        const cache = await caches.open(RUNTIME_CACHE);
         const cachedResponse = await cache.match(OFFLINE_URL);
         return cachedResponse;
       }
     })());
+  } else {
+    event.respondWith(
+      caches
+        .match(event.request)
+        .then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse
+          }
+          return caches.open(RUNTIME_CACHE).then(cache => {
+            return fetch(event.request)
+              .then(response => {
+                // Put a copy of the response in the runtime cache.
+                return cache.put(event.request, response.clone()).then(() => {
+                  return response;
+                })
+              })
+          })
+        })
+    )
   }
-});
+})
