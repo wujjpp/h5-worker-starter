@@ -67,7 +67,7 @@ body {
   z-index: 1;
 }
 
-#offline-resources {
+.offline-resources {
   display: none;
 }
 
