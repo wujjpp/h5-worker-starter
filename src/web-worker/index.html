@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta 
+    name="viewport" 
+    content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+</head>
+
+<body>
+  <div>
+    <button onclick="start()">Start</button>
+    <button onclick="stop()">Stop</button>
+  </div>
+  <div>
+    <p>
+      <button onclick="startCounter1()">
+        不使用Web Worker执行计数器
+      </button>
+      <span id="count1">0</span>
+    </p>
+
+    <p>
+      <button onclick="startCounter2()">
+        使用Web Worker执行计数器
+      </button>
+      <span id="count2">0</span>
+    </p>
+  </div>
+
+  <script>
+    // 载入worker
+    const worker = new Worker('./worker.js')
+
+    worker.onmessage = e => {
+      switch (e.data.event) {
+        case 'onStarted':
+          console.log(`[main]: ${JSON.stringify(e.data)}`)
+          break
+        case 'onStopped':
+          console.log(`[main]: ${JSON.stringify(e.data)}`)
+          break
+        case 'onCounted':
+          document.getElementById('count2').innerText = e.data.payload.count
+          break;
+      }
+    }
+
+    function start(){
+      worker.postMessage({
+        event: 'onStart',
+        payload:{
+          t: new Date()
+        }
+      })
+    }
+
+    function stop(){
+      worker.postMessage({
+        event: 'onStop',
+        payload:{
+          t: new Date()
+        }
+      })
+    }
+
+    function startCounter1(){
+      let count = 0
+      while(true){
+        count++
+        console.log(count)
+        document.getElementById('count1').innerText = count
+      }
+    }
+
+    function startCounter2(){
+      worker.postMessage({
+        event: 'onCount'
+      })
+    }
+  </script>
+</body>
+
+</html>

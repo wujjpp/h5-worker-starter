@@ -1,0 +1,22 @@
+{
+  "name": "h5-worker-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server ./src -o"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wujjpp/h5-worker-starter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wujjpp/h5-worker-starter/issues"
+  },
+  "homepage": "https://github.com/wujjpp/h5-worker-starter#readme",
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  }
+}
