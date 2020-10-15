@@ -3,8 +3,8 @@
 ## How to Install
 
 ```shell
-$ git clone https://github.com/wujjpp/tensorflow-js.git
-$ cd tensorflow-js
+$ git clone https://github.com/wujjpp/h5-worker-starter.git
+$ cd h5-worker-starter
 $ npm install
 ```
 
