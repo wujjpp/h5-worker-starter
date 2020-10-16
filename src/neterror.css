@@ -25,6 +25,24 @@ body {
   display: none;
 }
 
+.title-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(0, 0, 0, .6)
+}
+
+.detect-container {
+  position: absolute;
+  bottom: -10px;
+  cursor: pointer;
+  color: #128bed;
+  font-size: 14px;
+}
+
+
 /* Offline page */
 .offline .interstitial-wrapper {
   color: #2b2b2b;
@@ -34,6 +52,7 @@ body {
   max-width: 600px;
   padding-top: 100px;
   width: 100%;
+  position: relative;
 }
 
 .offline .runner-container {
