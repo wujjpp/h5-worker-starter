@@ -1,15 +1,7 @@
 const OFFLINE_INDEX = '/neterror.html'
 
 const OFFLINE_URLS = [
-  OFFLINE_INDEX,
-  '/neterror.css',
-  '/neterror.js',
-  '/neterror/default_100_percent/100-disabled.png',
-  '/neterror/default_100_percent/100-error-offline.png',
-  '/neterror/default_100_percent/100-offline-sprite.png',
-  '/neterror/default_200_percent/200-disabled.png',
-  '/neterror/default_200_percent/200-error-offline.png',
-  '/neterror/default_200_percent/200-offline-sprite.png',
+  OFFLINE_INDEX
 ]
 
 const RUNTIME_CACHE = 'cache-v1'
