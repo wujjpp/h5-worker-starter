@@ -25,9 +25,7 @@ body {
   display: none;
 }
 
-
 /* Offline page */
-
 .offline .interstitial-wrapper {
   color: #2b2b2b;
   font-size: 1em;
@@ -67,7 +65,7 @@ body {
   z-index: 1;
 }
 
-.offline-resources {
+#offline-resources {
   display: none;
 }
 
